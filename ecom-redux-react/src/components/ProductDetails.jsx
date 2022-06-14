@@ -1,12 +1,10 @@
 import React, { useEffect } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  selectedProducts,
+  fetchProductDetail,
   removeSelectedProduct,
-} from "../redux/features/product/productSlice";
-import StarsIcon from "@mui/icons-material/Stars";
+} from "../redux/features/product/productSlice.js";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -15,30 +13,25 @@ import Typography from "@mui/material/Typography";
 
 function ProductDetails() {
   const { productId } = useParams();
-  const selectedProduct = useSelector(
+  const dispatch = useDispatch();
+  const { entities, loading } = useSelector(
     (state) => state.allProducts.selectedProduct
   );
-  const { category, title, price, description, image } = selectedProduct;
-  const dispatch = useDispatch();
-  async function fetchProductDetail() {
-    const response = await axios
-      .get(`https://fakestoreapi.com/products/${productId}`)
-      .catch((e) => {
-        console.log("Error : ", e);
-      });
-    dispatch(selectedProducts(response.data));
-  }
+  const { category, title, price, description, image } = entities;
+
+
   useEffect(() => {
-    if (productId && productId !== "") fetchProductDetail();
+    if (productId && productId !== "") dispatch(fetchProductDetail(productId));
     return () => {
       dispatch(removeSelectedProduct());
     };
-  }, [productId]);
+  }, [dispatch]);
+
+  if(loading) return (<div>Loading......</div>)
+
   return (
     <div>
-      {Object.keys(selectedProduct).length === 0 ? (
-        <div>Loading......</div>
-      ) : (
+      {
         <Card
           sx={{ maxWidth: 1500 }}
           style={{
@@ -84,7 +77,7 @@ function ProductDetails() {
             </CardActions>
           </div>
         </Card>
-      )}
+      }
     </div>
   );
 }

@@ -6,8 +6,8 @@ import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
 
 function ProductsComponent() {
-  const products = useSelector((state) => state.allProducts.products);
-  const renderList = products.map((product) => {
+  const {entities} = useSelector((state) => state.allProducts.products);
+  const renderList = entities.map((product) => {
     const { id, title, image, price, category } = product;
     const trimmedTitle = title.substr(0, title.lastIndexOf(" ", 30));
     return (
@@ -74,11 +74,7 @@ function ProductsComponent() {
     >
       <Grid item xs={12}>
         <Grid container justifyContent="center" spacing={15}>
-          {Object.keys(products).length === 0 ? (
-            <div>Loading......</div>
-          ) : (
-            renderList
-          )}
+          {renderList}
         </Grid>
       </Grid>
     </Grid>
